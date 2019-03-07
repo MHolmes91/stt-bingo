@@ -118,6 +118,7 @@ const App = ({ classes }) => {
           </div>
         )}
         <div>{words}</div>
+        <div>{gotBingo ? 'BINGO!' : ''}</div>
       </main>
     </div>
   )
