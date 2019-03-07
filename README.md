@@ -1,3 +1,9 @@
+# Speech To Text (STT) Bingo
+
+This is a fun little app I made to try out react's new "hooks" feature along with Chrome's text-to-speech and speech-to-text features.
+
+[A live demo can be found here](https://mholmes91.github.io/stt-bingo/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
