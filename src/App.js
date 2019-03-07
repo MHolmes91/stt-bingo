@@ -15,22 +15,6 @@ const styles = {
     justifyContent: 'center',
     fontSize: 'calc(10px + 2vmin)',
     color: 'white'
-  },
-  appLogo: {
-    animation: 'App-logo-spin infinite 20s linear',
-    height: '10vmin',
-    pointerEvents: 'none',
-  },
-  appLink: {
-    color: '#61dafb'
-  },
-  '@keyframes App-logo-spin': {
-    from: {
-      transform: 'rotate(0deg)'
-    },
-    to: {
-      transform: 'rotate(360deg)'
-    }
   }
 }
 
@@ -39,9 +23,17 @@ const App = ({ classes }) => {
   const [words, setWords] = useState('')
   const [speechRecognition, setSpeechRecognition] = useState(null)
 
+  const addWords = newWords => {
+    setWords(prevWords => {
+      console.log('previous:', prevWords)
+      console.log('next: ', newWords)
+      return prevWords + newWords + ' '
+    })
+  }
+
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
-      console.log('no speech recognition')
+      alert('no speech recognition available')
     } else {
       const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = true
@@ -52,15 +44,15 @@ const App = ({ classes }) => {
       recognition.onresult = event => {
         console.log(event)
         let resultWords = ''
-        for(let i = 0; i < event.results.length; i++){
-          const result = event.results[i]
+        if(event.results.length){
+          const result = event.results[event.results.length - 1]
           for(let n = 0; n < result.length; n++){
             const resultPart = result[n]
             resultWords += resultPart.transcript
           }
         }
-        console.log(resultWords)
-        setWords(words + resultWords + ' ')
+        
+        addWords(resultWords)
       }
       recognition.onerror = event => {
         console.log('error', event)
@@ -70,9 +62,11 @@ const App = ({ classes }) => {
           })
           
         }
-        //setWords('error')
       }
-      recognition.onend = () => setIsRecognizing(false)
+      recognition.onend = () => {
+        console.log('has ended')
+        setIsRecognizing(false)
+      }
 
       recognition.start();
 
@@ -89,18 +83,7 @@ const App = ({ classes }) => {
   return (
     <div className={classes.app}>
       <header className={classes.appHeader}>
-        <img src={logo} className={classes.appLogo} alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className={classes.appLink}
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        Say stuff!
       </header>
       <main>
         <div>
