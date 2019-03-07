@@ -22,6 +22,8 @@ const App = ({ classes }) => {
   const [isRecognizing, setIsRecognizing] = useState(false)
   const [words, setWords] = useState('')
   const [speechRecognition, setSpeechRecognition] = useState(null)
+  const [speechSynth, setSpeechSynth] = useState(null)
+  const [gotBingo, setGotBingo] = useState(false)
 
   const addWords = newWords => {
     setWords(prevWords => {
@@ -33,7 +35,7 @@ const App = ({ classes }) => {
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window)) {
-      alert('no speech recognition available')
+      alert('No speech recognition available')
     } else {
       const recognition = new window.webkitSpeechRecognition();
       recognition.continuous = true
@@ -72,6 +74,13 @@ const App = ({ classes }) => {
 
       setSpeechRecognition(recognition)
     }
+
+    if (!('speechSynthesis' in window) || !('SpeechSynthesisUtterance' in window)) {
+      alert('No speech synthesizer available')
+    }
+    else{
+      setSpeechSynth(window.speechSynthesis)
+    }
   }, [])
 
   const toggleRecognition = () => speechRecognition
@@ -79,6 +88,20 @@ const App = ({ classes }) => {
       ? speechRecognition.stop()
       : speechRecognition.start()
     )
+
+  const bingoWords = ['I', 'like', 'bingo']
+
+  const hasWordBeenSaid = word => (new RegExp(`(\\s${word}\\s|^${word}\\s|\\s${word})`, 'gi')).test(words)
+
+  const haveAllWordsBeenSaid = () => bingoWords.every(hasWordBeenSaid)
+
+  useEffect(() => {
+    if(speechSynth && !gotBingo && haveAllWordsBeenSaid()){
+      setGotBingo(true)
+      const utterance = new window.SpeechSynthesisUtterance('BINGO!')
+      speechSynth.speak(utterance)
+    }
+  })
 
   return (
     <div className={classes.app}>
@@ -89,6 +112,11 @@ const App = ({ classes }) => {
         <div>
           <button onClick={toggleRecognition}>{isRecognizing ? 'Stop' : 'Start'}</button>
         </div>
+        {bingoWords.map((word, i) =>
+          <div key={i}>
+            {`${word}: ${hasWordBeenSaid(word) ? 'true' : 'false'}`}
+          </div>
+        )}
         <div>{words}</div>
       </main>
     </div>
