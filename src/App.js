@@ -1,5 +1,4 @@
-import React, { Component, useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
 import injectJSS from 'react-jss'
 
 const styles = {
